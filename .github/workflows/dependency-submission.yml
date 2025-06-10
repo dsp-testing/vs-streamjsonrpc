@@ -89,6 +89,6 @@ jobs:
           fi
 
       - name: submit-dependency-snapshot
-        uses: indigok/component-detection-dependency-submission-action@44d50f329e0ddbee04257335c37d09612447b1eb
+        uses: advanced-security/component-detection-dependency-submission-action@v0.0.6
         with: 
           detectorArgs: "DetectorCategories=NuGet"
