@@ -18,15 +18,32 @@ jobs:
         with:
           ref: ${{ github.event.inputs.commit-ref }}
 
-
       - name: setup-ecosystem
-        uses: actions/setup-dotnet@v4
+        id: setup-ecosystem
+        run: |
+          if [ -f "global.json" ]; then
+            echo "Found global.json file"
+            echo "use-global-json=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No global.json file found, using default versions"
+            echo "use-global-json=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Use global.json to install .NET if it exists
+      - uses: actions/setup-dotnet@v4
+        if: steps.setup-ecosystem.outputs.use-global-json == 'true'
+        with:
+          global-json-file: global.json
+
+      # No global.json install sts and lts versions
+      # https://dotnet.microsoft.com/en-us/download/dotnet
+      - uses: actions/setup-dotnet@v4
+        if: steps.setup-ecosystem.outputs.use-global-json == 'false'
         with:
           dotnet-version: |
-            6.0.x
-            7.0.x
             8.0.x
-            9.0.x
+   
+
 
       - name: log-toolchain-versions
         run: |
